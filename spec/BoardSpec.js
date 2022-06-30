@@ -233,4 +233,5 @@ describe('Board', function() {
       expect(board.hasAnyQueensConflicts()).to.be.equal(true);
     });
   });
+
 });

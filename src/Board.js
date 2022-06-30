@@ -5,7 +5,6 @@
 (function() {
 
   window.Board = Backbone.Model.extend({
-// commented out logs. need to remove later
     initialize: function (params) {
       if (_.isUndefined(params) || _.isNull(params)) {
        // console.log('Good guess! But to use the Board() constructor, you must pass it an argument in one of the following formats:');
@@ -42,7 +41,6 @@
     },
 
     hasAnyQueenConflictsOn: function(rowIndex, colIndex) {
-      //console.log(this);
       return (
         this.hasRowConflictAt(rowIndex) ||
         this.hasColConflictAt(colIndex) ||
@@ -100,12 +98,12 @@
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
       var boardObj = this.attributes;
-      for(var rowIndex in boardObj) {
+      for (var rowIndex in boardObj) {
         rowIndex = Number(rowIndex);
         // console.log(this.hasRowConflictAt(rowIn))
-         if(this.hasRowConflictAt(rowIndex)) {
-           return true;
-         }
+        if (this.hasRowConflictAt(rowIndex)) {
+          return true;
+        }
       }
       return false;
     },
@@ -122,10 +120,9 @@
       }
       var colArr = [];
       for (var key in this.attributes) {
-        colArr.push(this.attributes[key][colIndex])
+        colArr.push(this.attributes[key][colIndex]);
       }
       colArr.pop();
-      //console.log(colArr);
 
       var result = colArr.reduce((accum, currValue) => accum + currValue, 0);
       return result > 1;
@@ -135,13 +132,13 @@
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
       var boardObj = this.attributes;
-      for(var colIndex in boardObj) {
+      for (var colIndex in boardObj) {
         colIndex = Number(colIndex);
         // console.log(this.hasRowConflictAt(rowIn))
-         if(this.hasColConflictAt(colIndex)) {
-           //console.log(colIndex)
-           return true;
-         }
+        if (this.hasColConflictAt(colIndex)) {
+          //console.log(colIndex)
+          return true;
+        }
       }
       return false;
     },
@@ -154,16 +151,15 @@
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
       var n = this.attributes['n'];
-      if(Math.abs(majorDiagonalColumnIndexAtFirstRow) >= n - 1 ) {
+      if (Math.abs(majorDiagonalColumnIndexAtFirstRow) >= n - 1 ) {
         return false;
       }
       var diagArr = [];
       for (var key in this.attributes) {
-        if(key !== 'n') {
+        if (key !== 'n') {
           key = Number(key);
           if (majorDiagonalColumnIndexAtFirstRow + key <= (n - 1) && majorDiagonalColumnIndexAtFirstRow + key >= 0) {
-            diagArr.push(this.attributes[key][majorDiagonalColumnIndexAtFirstRow + key])
-           //console.log(diagArr);
+            diagArr.push(this.attributes[key][majorDiagonalColumnIndexAtFirstRow + key]);
           }
         }
       }
@@ -174,16 +170,16 @@
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
       var boardObj = this.attributes;
-      for(var rowIndex in boardObj) {
-        rowIndex = Number(rowIndex)
-        if(rowIndex === this.attributes['n']) {
+      for (var rowIndex in boardObj) {
+        rowIndex = Number(rowIndex);
+        if (rowIndex === this.attributes['n']) {
           continue;
-        };
-         if(this.hasMajorDiagonalConflictAt(rowIndex) || this.hasMajorDiagonalConflictAt(-rowIndex)) {
-           return true;
-         }
+        }
+        if (this.hasMajorDiagonalConflictAt(rowIndex) || this.hasMajorDiagonalConflictAt(-rowIndex)) {
+          return true;
+        }
       }
-      return false; // fixme
+      return false;
     },
 
 
@@ -193,41 +189,32 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-
       var n = this.attributes['n'];
-      console.log(this.attributes)
-      if(Math.abs(minorDiagonalColumnIndexAtFirstRow) >= n - 1 ) {
-        return false;
-      }
       var diagArr = [];
       for (var key in this.attributes) {
-        if(key !== 'n') {
+        if (key !== 'n') {
           key = Number(key);
           var index = (minorDiagonalColumnIndexAtFirstRow >= 0) ? minorDiagonalColumnIndexAtFirstRow - key : n - 1 - minorDiagonalColumnIndexAtFirstRow - key;
-          //console.log(minorDiagonalColumnIndexAtFirstRow, index, this.attributes[key][index], this.attributes[key])
           if (index <= (n - 1) && index >= 0) {
-            diagArr.push(this.attributes[key][index])
-            //console.log(index, key, minorDiagonalColumnIndexAtFirstRow);
+            diagArr.push(this.attributes[key][index]);
           }
         }
       }
-      console.log(diagArr, minorDiagonalColumnIndexAtFirstRow);
       var result = diagArr.reduce((accum, currValue) => accum + currValue, 0);
-      console.log(result > 1)
-      return result > 1;  // fixme
+      return result > 1;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
       var boardObj = this.attributes;
-      for(var rowIndex in boardObj) {
-        rowIndex = Number(rowIndex)
-        if(rowIndex === this.attributes['n']) {
+      for (var rowIndex in boardObj) {
+        rowIndex = Number(rowIndex);
+        if (rowIndex === this.attributes['n']) {
           continue;
-        };
-         if(this.hasMinorDiagonalConflictAt(rowIndex) || this.hasMinorDiagonalConflictAt(-rowIndex)) {
-           return true;
-         }
+        }
+        if (this.hasMinorDiagonalConflictAt(rowIndex) || this.hasMinorDiagonalConflictAt(-rowIndex)) {
+          return true;
+        }
       }
       return false;
     }
