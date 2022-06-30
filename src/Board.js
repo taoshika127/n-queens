@@ -195,15 +195,13 @@
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
 
       var n = this.attributes['n'];
-      console.log(this.attributes)
-      if(Math.abs(minorDiagonalColumnIndexAtFirstRow) >= n - 1 ) {
-        return false;
-      }
+      //console.log(this.attributes)
+
       var diagArr = [];
       for (var key in this.attributes) {
         if(key !== 'n') {
           key = Number(key);
-          var index = (minorDiagonalColumnIndexAtFirstRow >= 0) ? minorDiagonalColumnIndexAtFirstRow - key : n - 1 - minorDiagonalColumnIndexAtFirstRow - key;
+          var index = (minorDiagonalColumnIndexAtFirstRow > 0) ? minorDiagonalColumnIndexAtFirstRow - key : n - 1 - minorDiagonalColumnIndexAtFirstRow - key;
           //console.log(minorDiagonalColumnIndexAtFirstRow, index, this.attributes[key][index], this.attributes[key])
           if (index <= (n - 1) && index >= 0) {
             diagArr.push(this.attributes[key][index])
@@ -211,9 +209,7 @@
           }
         }
       }
-      console.log(diagArr, minorDiagonalColumnIndexAtFirstRow);
       var result = diagArr.reduce((accum, currValue) => accum + currValue, 0);
-      console.log(result > 1)
       return result > 1;  // fixme
     },
 
