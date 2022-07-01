@@ -30,69 +30,62 @@ window.findNRooksSolution = function(n) {
 };
 
 
-window.copyBoard = function (board) {
-  var copy = new Board({n: board.attributes.n});
-  var stringIFY = JSON.stringify(board.attributes);
-  copy.attributes = JSON.parse(stringIFY);
-};
-
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var matrix = [];
-  for (var i = 0; i < n; i++) {
-    matrix.push([]);
-    for (var j = 0; j < n; j++) {
-      matrix[i].push(0);
-    }
+  if (n === 1) {
+    return 1;
   }
-  var board = new Board(matrix);
-  console.log(board);
-  var queue = [];
-  var result = [];
-  var key = 0;
-  queue.push(board);
-  while (key < n) {
+  var result = 1;
+  for (var i = 1; i <= n; i++) {
+    result *= i;
+  }
+  return result;
+};
+
+var toggledBoard = function (n, colArr) {
+  //it will create a brand new n by n board and toggle the column at its index row and return the board
+  var board = new Board({n: n});
+  colArr.forEach(function(element, index) {
+    board.togglePiece(index, element);
+  });
+  return board;
+};
+
+
+window.NQueensSolutionArr = function(n) {
+  if (n === 0) { return [[], 1]; }
+  if (n === 1) { return [[[1]], 1]; }
+  if (n === 2 || n === 3) { return [new Board({n: n}).rows(), 0]; }
+  var board = new Board({n: n});
+  var queue = [[]];
+  for (var rowIndex = 0; rowIndex < n; rowIndex++) {
     var copyQueue = queue.slice();
     queue = [];
-    for (var index = 0; index < n; index++) {
-      copyQueue.forEach(function(workingBoard) {
-        var copy = window.copyBoard(workingBoard);
-        console.log(copy, workingBoard);
-        copy.togglePiece(key, index);
-        console.log(key, index, 'after toggle', copy);
-        if (copy.hasAnyRowConflicts() || copy.hasAnyColConflicts()) {
-          console.log('conflict, toggle back', board.rows());
-          copy.togglePiece(key, index);
-          console.log(key, index, copy);
-        } else {
-          console.log('this step is ok', copy.rows());
-          queue.push(copy);
-          if (key === n - 1) {
-            result.push(workingBoard);
+    for (var colIndex = 0; colIndex < n; colIndex++) {
+      copyQueue.forEach(function(colArr) {
+        if (!colArr.includes(colIndex)) {
+          var copy = toggledBoard(n, colArr);
+          copy.togglePiece(rowIndex, colIndex);
+          if (!copy.hasAnyRowConflicts() && !copy.hasAnyColConflicts()
+          && !copy.hasAnyMajorDiagonalConflicts() && !copy.hasAnyMinorDiagonalConflicts()) {
+            var updatedColArr = colArr.slice();
+            updatedColArr.push(colIndex);
+            queue.push(updatedColArr);
           }
         }
       });
     }
-    console.log(key, queue);
-    key++;
+    if (rowIndex === n - 1) { return [toggledBoard(n, queue[0]).rows(), queue.length]; }
   }
-  return result.length;
-
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
-
-  //console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  return window.NQueensSolutionArr(n)[0];
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
-
-  //console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  return window.NQueensSolutionArr(n)[1];
 };
