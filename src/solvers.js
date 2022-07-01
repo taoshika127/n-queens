@@ -15,6 +15,15 @@
 
 
 // commented out the consoles.. need to add back in later
+var toggledBoard = function (n, colArr) {
+  //it will create a brand new n by n board and toggle the column at its index row and return the board
+  var board = new Board({n: n});
+  colArr.forEach(function(element, index) {
+    board.togglePiece(index, element);
+  });
+  return board;
+};
+
 window.findNRooksSolution = function(n) {
   var solution = [];
   for (var i = 0; i < n; i++) {
@@ -33,31 +42,38 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  if (n === 1) {
-    return 1;
-  }
-  var result = 1;
-  for (var i = 1; i <= n; i++) {
-    result *= i;
-  }
-  return result;
+  if (n === 0 || n === 1) { return 1; }
+  var result = [];
+  var children = [[]];
+  var createChildren = function(children) {
+    children.forEach(function(colArr) {
+      var subChildren = [];
+      var rowIndex = colArr.length;
+      if (rowIndex === n) {
+        result.push(colArr);
+        return;
+      }
+      for (var colIndex = 0; colIndex < n; colIndex ++) {
+        if (!colArr.includes(colIndex)) {
+          var colArrCopy = colArr.slice();
+          colArrCopy.push(colIndex);
+          subChildren.push(colArrCopy);
+        }
+      }
+      createChildren(subChildren);
+    });
+  };
+  createChildren(children);
+  return result.length;
 };
 
-var toggledBoard = function (n, colArr) {
-  //it will create a brand new n by n board and toggle the column at its index row and return the board
-  var board = new Board({n: n});
-  colArr.forEach(function(element, index) {
-    board.togglePiece(index, element);
-  });
-  return board;
-};
+
 
 
 window.NQueensSolutionArr = function(n) {
   if (n === 0) { return [[], 1]; }
   if (n === 1) { return [[[1]], 1]; }
   if (n === 2 || n === 3) { return [new Board({n: n}).rows(), 0]; }
-  var board = new Board({n: n});
   var queue = [[]];
   for (var rowIndex = 0; rowIndex < n; rowIndex++) {
     var copyQueue = queue.slice();
@@ -65,10 +81,9 @@ window.NQueensSolutionArr = function(n) {
     for (var colIndex = 0; colIndex < n; colIndex++) {
       copyQueue.forEach(function(colArr) {
         if (!colArr.includes(colIndex)) {
-          var copy = toggledBoard(n, colArr);
-          copy.togglePiece(rowIndex, colIndex);
-          if (!copy.hasAnyRowConflicts() && !copy.hasAnyColConflicts()
-          && !copy.hasAnyMajorDiagonalConflicts() && !copy.hasAnyMinorDiagonalConflicts()) {
+          var newBoard = toggledBoard(n, colArr);
+          newBoard.togglePiece(rowIndex, colIndex);
+          if (!newBoard.hasAnyQueensConflicts()) {
             var updatedColArr = colArr.slice();
             updatedColArr.push(colIndex);
             queue.push(updatedColArr);
